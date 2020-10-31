@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Page Title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, 
+        initial-scale=1">
+        <link href= "styles/style.css" rel="stylesheet">
+        <link href= "styles/navbar.css" rel="stylesheet">
+        <link href= "styles/buttons.css" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@600&display=swap" rel="stylesheet"> 
+        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@600&display=swap" rel="stylesheet"> 
+        <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet"> 
+    </head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1 id="displayName">Jonne Hindriks Jeugdtoernooi</h1>
+        <h3>2020 - 2021</h3>
+    </div>
+
+    <!-- Navigation Bar -->
+    <div class="navbar">
+        <a href="/home/kblaauw/web-projects/Tournement/index.html">Home</a>
+        <a href="/home/kblaauw/web-projects/Tournement/nieuw.html">Nieuw Toernooi</a>
+        <a href="/home/kblaauw/web-projects/Tournement/tournament.html" onclick="setType('PF')">Poule and Finals</a>
+        <a href="/home/kblaauw/web-projects/Tournement/tournament.html" onclick="setType('KF')">Poule and CrossFinals</a>
+        <a href="/home/kblaauw/web-projects/Tournement/tournament.html" onclick="setType('PK')">Poule and Knockout</a>
+        <a href="/home/kblaauw/web-projects/Tournement/tournament.html" onclick="setType('CP')">Competition</a>
+        <a href="/home/kblaauw/web-projects/Tournement/tournament.html" onclick="setType('KO')">Knockout</a>
+        <a href="/home/kblaauw/web-projects/Tournement/tournament.html">Huidig Toernooi</a>
+    </div>
+
+    <!-- The flexible grid (content) -->
+    <div class="row">  
+        <div class="left1">  <!-- class left-->
+            <div class="outLineLeft" id="left2">
+                <form>
+                    <h1>Nieuw toernooi</h1>
+                    <div class="labelInputContainer">
+                        <label for="naam">Naam</label>
+                        <input class="ui" id="naam" type="text" value="Jonne Hindriks Jeugdtoernooi" required>
+                    </div>
+                    <div class="labelInputContainer">
+                        <label for="type">Type</label>
+                        <select class="ui" id="type" onchange="addPossibleNumbers()" required>
+                            <option value='PF'>Poule en Finals</option>
+                            <option value='KF'>Poule en CrossFinals</option>
+                            <option value='PK'>Poule and Knockout</option>
+                            <option value='CP'>Competition</option>
+                            <option value='KO'>Knockout</option>
+                        </select>
+                    </div>
+                    <div class="labelInputContainer">
+                        <label for="aantal">Aantal teams</label>
+                        <select class="ui" id="aantal" onchange="addFields()" required>
+                            <option value="">Kies aantal </option>
+                        </select>
+                    </div>
+                    <div id="fieldContainer">
+                    </div>
+                    <div class="labelInputContainer">
+                        <label for="begintijd">Aanvangstijd</label>
+                        <input class="ui" type="time" id="begintijd" name="appt"
+                        min="00:00" max="24:00" value="19:00" required>
+                    </div>
+                    <div class="labelInputContainer">
+                        <label for="speelduur">Speelduur</label>
+                        <input class="ui" type="time" id="speelduur" name="appt"
+                        min="00:00" max="24:00" value="00:15" required>
+                    </div>
+                    <div class="labelInputContainer">
+                        <label for="pauze">Tijd tussen wedstrijden</label>
+                        <input class="ui" type="time" id="pauze" name="appt"
+                        min="00:00" max="24:00" value="00:05" required>
+                    </div>
+                    <button class="knopje" type="submit"><h2>Maak Toernooi</h2></button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+          
+    <!-- Footer -->
+    <div class="footer">
+        <h2>Footer</h2>
+    </div>
+    <script src="scripts/nieuw.js"></script>
+</body>
+</html>
