@@ -94,7 +94,7 @@ const form  = document.getElementsByTagName('form')[0];
 form.addEventListener('submit', function (event) {
   // if the naam field is valid, we let the form submit
     saveVariables();
-    window.location.assign("/home/kblaauw/web-projects/Tournement/tournament.html");
+    window.location.assign("tournament.html");
     event.preventDefault();
 })
 
