@@ -362,7 +362,7 @@ function newKOTable(id_)
     cell_3.appendChild(newNumInput());
     cell_7.appendChild(newNumInput());
     cell_4.appendChild(crText("19:00"));
-    cell_5.appendChild(crText("Veld 1"));
+    cell_5.appendChild(crText("1"));
 
     row_0.appendChild(cell_0);
     row_0.appendChild(cell_1);
