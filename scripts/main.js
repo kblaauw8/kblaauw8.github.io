@@ -361,6 +361,8 @@ function newKOTable(id_)
     cell_1.appendChild(text_1);
     cell_3.appendChild(newNumInput());
     cell_7.appendChild(newNumInput());
+    cell_4.appendChild(crText("19:00"));
+    cell_5.appendChild(crText("Veld 1"));
 
     row_0.appendChild(cell_0);
     row_0.appendChild(cell_1);
@@ -379,6 +381,8 @@ function newKOTable(id_)
 
 function makeSchedule()
 {
+    let finalArray = ["Achtste Finales", "Kwart Finales", "Halve Finales", "Finales"];
+
      if (Type == 'KO')
     {
         let finalSpaces = document.querySelectorAll("#KOfinal");
@@ -389,11 +393,11 @@ function makeSchedule()
     {
         let pouleSpaces = document.querySelectorAll("#pouleGamesBox");
         for (let i = 0; i != pouleSpaces.length; i++) 
-            pouleSpaces[i].appendChild(newPouleTable(Teams_PF[i], "pf"));
+            pouleSpaces[i].appendChild(newPouleTable(Teams_PF[i], "pf", "Poule " + numToLet(i)));
 
         let finalSpaces = document.querySelectorAll("#finalGamesBox");
         for (let i = 0; i != finalSpaces.length; i++) 
-            finalSpaces[i].appendChild(newFinalTable(Aantal / 2, "finalGame" + i));
+            finalSpaces[i].appendChild(newFinalTable(Aantal / 2, "finalGame" + i, finalArray[finalArray.length - finalSpaces.length + i]));
     }
     else if (Type == 'CP')
     {
@@ -405,7 +409,7 @@ function makeSchedule()
     {
         let pouleSpaces = document.querySelectorAll("#pouleGames");
         for (let i = 0; i != pouleSpaces.length; i++) 
-            pouleSpaces[i].appendChild(newPouleTable(Teams_PK[i], "pk"));
+            pouleSpaces[i].appendChild(newPouleTable(Teams_PK[i], "pk", "Groepswedstrijden"));
 
         let finalSpaces = document.querySelectorAll("#KOfinal");
         for (let i = 0; i != finalSpaces.length; i++) 
@@ -506,7 +510,7 @@ function newStandTable(aantal){
     return table
 }
 
-function newPouleTable(teams, class_){
+function newPouleTable(teams, class_, header){
     let nRounds = teams.length - 1;
     let nGamesPerRound = teams.length / 2;
     let pairs = makeRoundRobinPairings(teams);
@@ -521,7 +525,7 @@ function newPouleTable(teams, class_){
     let cell_3 = crType("td");
     cell_0.setAttribute("colspan", 7);
     cell_3.setAttribute("colspan", 5);
-    cell_0.appendChild(crText("Speelschema"));
+    cell_0.appendChild(crText(header));
     cell_1.appendChild(crText("Tijd"));
     cell_2.appendChild(crText("Veld"));
     cell_3.appendChild(crText("Teams"));
@@ -552,7 +556,7 @@ function newPouleTable(teams, class_){
             cell_10.setAttribute("id", team2.d_number);
             cell_4.appendChild(crText("19:00"));
             cell_5.appendChild(crText("1"));
-            cell_8.appendChild(crText(":"));
+            cell_8.appendChild(crText("-"));
             cell_7.appendChild(newNumInput());
             cell_9.appendChild(newNumInput());
             row_2.appendChild(cell_4);
@@ -581,7 +585,7 @@ function newCompRoundTable(teams, round){
     let cell_3 = crType("td");
     cell_0.setAttribute("colspan", 7);
     cell_3.setAttribute("colspan", 5);
-    cell_0.appendChild(crText("Speelschema"));
+    cell_0.appendChild(crText("Ronde " + (round + 1)));
     cell_1.appendChild(crText("Tijd"));
     cell_2.appendChild(crText("Veld"));
     cell_3.appendChild(crText("Teams"));
@@ -611,7 +615,7 @@ function newCompRoundTable(teams, round){
         cell_10.setAttribute("id", team2.d_number);
         cell_4.appendChild(crText("19:00"));
         cell_5.appendChild(crText("1"));
-        cell_8.appendChild(crText(":"));
+        cell_8.appendChild(crText("-"));
         cell_7.appendChild(newNumInput());
         cell_9.appendChild(newNumInput());
         row_2.appendChild(cell_4);
@@ -626,7 +630,7 @@ function newCompRoundTable(teams, round){
     return table;
 }
 
-function newFinalTable(aantal, gameID){
+function newFinalTable(aantal, gameID, header){
        
     let table = crType("table");
     table.setAttribute("class", "fi");
@@ -638,7 +642,7 @@ function newFinalTable(aantal, gameID){
     let cell_3 = crType("td");
     cell_0.setAttribute("colspan", 7);
     cell_3.setAttribute("colspan", 5);
-    cell_0.appendChild(crText("Speelschema"));
+    cell_0.appendChild(crText(header));
     cell_1.appendChild(crText("Tijd"));
     cell_2.appendChild(crText("Veld"));
     cell_3.appendChild(crText("Teams"));
@@ -663,7 +667,7 @@ function newFinalTable(aantal, gameID){
             cell_4.setAttribute("id", game);
             cell_4.appendChild(crText("19:00"));
             cell_5.appendChild(crText("1"));
-            cell_8.appendChild(crText(":"));
+            cell_8.appendChild(crText("-"));
             cell_7.appendChild(newNumInput());
             cell_9.appendChild(newNumInput());
             row_2.appendChild(cell_4);

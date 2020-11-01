@@ -62,13 +62,6 @@ table.fi {
   width: 420px;
 }
 
-table tr.ro td {
-  background-color: #3a7d37;
-  font-size: 90%;
-  color: white;
-  padding: 0px;
-}
-
 td, th {
   padding: 4px 10px;
 }
@@ -103,12 +96,6 @@ caption {
   padding: 10px;
 }
 
-table.center {
-  margin-left:auto; 
-  margin-right:auto;
-  color: black;
-}
-
 table tr:first-child th:first-child {
     border-top-left-radius: 5px;
 }
@@ -133,33 +120,28 @@ table.KOgame {
 
 table.KOgame tr:first-child td:first-child{
   border-top-left-radius: 5px;
-  background-color: #d4d4d4;
-  border-bottom: 1px solid black;
+  background-color: #292e29;
+  color: white;
+  font-size: 110%;
 }
 table.KOgame tr:first-child td:nth-child(2){
-  background-color: #d4d4d4;
-  border-bottom: 1px solid black;
+  background-color: #292e29;
+  color: white;
+  font-size: 110%;
 }
 table.KOgame tr:first-child td:nth-child(3){
   width: 40%;
-  background-color: #737373;
-  border-bottom: 1px solid black;
-  color: white;
-  /*text-shadow: 1px 1px black;*/
-  font-size: 1.1rem;
-  font-weight: bold;
 }
 table.KOgame tr:first-child td:nth-child(4){
   border-top-right-radius: 5px;
-  background-color: #d4d4d4;
-  border-bottom: 1px solid black;
 }
+table.KOgame tr:nth-child(2) td:nth-child(2){
+}
+
 table.KOgame tr:nth-child(2) td:nth-child(3){
-  background-color: #737373;
-  color: white;
-  /*text-shadow: 1px 1px black;*/
-  font-size: 1.1rem;
-  font-weight: bolder;
+}
+
+table.KOgame tr:nth-child(2) td:nth-child(4){
 }
 
 table.KOgame tr.active td:nth-child(4) {
