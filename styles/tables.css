@@ -35,6 +35,10 @@ input[type=number]{
   font-size: 1.2rem;
 }
 
+input[type=number]hover{
+  background-color: red;
+}
+
 input[type=time]{
   background-color: inherit;
   padding: 0;

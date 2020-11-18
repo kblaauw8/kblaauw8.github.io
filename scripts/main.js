@@ -11,7 +11,6 @@ function Team(number, name) {
     this.d_ga = 0;
     this.d_gd = 0;
     this.d_KO = true;
-    this.d_left = true;
     this.printInfo = function() { 
         alert(  "Number: " + this.d_number + "\n" +
                 "Name: " + this.d_name + "\n" +
@@ -28,21 +27,53 @@ function Team(number, name) {
         this.d_gd = 0;
         this.d_KO = true;
     }
+    this.getName = function() {
+        return this.d_name;
+    }
 } 
 
-function processInput(){
-    Naam = sessionStorage.getItem('naam');
-    Type = sessionStorage.getItem('type');
-    Aantal = parseInt(sessionStorage.getItem('aantal'));
-    Begintijd = sessionStorage.getItem('begintijd');
-    Speelduur = sessionStorage.getItem('speelduur');
-    Pauze = sessionStorage.getItem('pauze');
-    for (let i = 0; i < Aantal; i++) 
-        TeamNamen[i] = sessionStorage.getItem('team' + i);
-    KO_aantal = Type == 'PK' ? Aantal / 2 : Aantal;
-    
-    document.getElementById("displayName").innerHTML = Naam;
-}
+function Options() { 
+    this.d_name = sessionStorage.getItem('naam');
+    this.d_type = sessionStorage.getItem('type'); 
+    this.d_numb = parseInt(sessionStorage.getItem('nTeams'));
+    this.d_numbev = isEven(this.d_numb) ? this.d_numb : this.d_numb + 1;
+    this.d_poules = parseInt(sessionStorage.getItem('nPoules'));
+    this.d_throughPoule = parseInt(sessionStorage.getItem('nThroughPoule'));
+    this.d_teamNamen = new Array(this.d_nTeams);
+    this.d_compRounds = this.d_numbev - 1;
+    this.addName = function(idx, name) { 
+        this.d_teamNamen[idx] = name;
+    } 
+    this.getName = function(idx) {
+        return this.d_teamNamen[idx];
+    }
+    this.getType = function() {
+        return this.d_type;
+    }
+    this.getNumb = function() {
+        return this.d_numb;
+    }
+    this.getNumbEv = function() {
+        return this.d_numbev;
+    }
+    this.getPoules = function() {
+        return this.d_poules;
+    }
+    this.getNumbPerPoules = function() {
+        return (this.d_numb / this.d_poules);
+    }
+    this.getthroughPoule = function() {
+        return this.d_throughPoule;
+    }
+    this.getKnockouts = function() {
+        return parseInt(this.d_throughPoule * this.d_poules);
+    }
+    this.getCompRounds = function() {
+        return this.d_compRounds;
+    }
+    for (let i = 0; i !=this.d_numb; i++) 
+        this.addName(i, sessionStorage.getItem('team' + i));
+} 
 
 function setType(type){
     sessionStorage.setItem('type', type);
@@ -91,23 +122,26 @@ function compare(team1, team2){
     
 }
 
-function makeRoundRobinPairings(players) {
-    if (players.length % 2 == 1) 
-        players.push(null);
+function makeRoundRobinPairings(teams) {
+    let players = teams.slice();
+    if (teams.length % 2 == 1) 
+        players.push(new Team(Options.getNumb(), 'DUMMY'));
     
-    const playerCount = players.length;
-    const rounds = playerCount - 1;
-    const half = playerCount / 2;
-    const tournamentPairings = [];
-    const playerIndexes = players.map((_, i) => i).slice(1);
+    let playerCount = players.length;
+    let rounds = playerCount - 1;
+    let half = playerCount / 2;
+    let tournamentPairings = [];
+    let playerIndexes = players.map((_, i) => i).slice(1);
 
     for (let round = 0; round < rounds; round++) {
-        const roundPairings = [];
-        const newPlayerIndexes = [0].concat(playerIndexes);
-        const firstHalf = newPlayerIndexes.slice(0, half);
-        const secondHalf = newPlayerIndexes.slice(half, playerCount).reverse();
+        let roundPairings = [];
+        let newPlayerIndexes = [0].concat(playerIndexes);
+        let firstHalf = newPlayerIndexes.slice(0, half);
+        let secondHalf = newPlayerIndexes.slice(half, playerCount).reverse();
 
         for (let i = 0; i < firstHalf.length; i++) {
+            if (players[firstHalf[i]].getName() == "DUMMY" || players[secondHalf[i]].getName() == "DUMMY")
+                continue;
             let pairing = round % 2 == 0 ?
             [players[firstHalf[i]], players[secondHalf[i]]]:
             [players[secondHalf[i]], players[firstHalf[i]]];
@@ -163,7 +197,7 @@ function makeLeft(){
     box.appendChild(outLineLeftBox);
 
     let standBox = document.getElementById("standSpace");
-    if (Type == 'PF' || Type == 'KF'){
+    if (Options.getType()== 'PF' || Options.getType()== 'KF'){
         let header1 = makeHeader('h1', "Poule A");
         let header2 = makeHeader('h1', "Poule B");
         standBox.appendChild(header1);
@@ -171,7 +205,7 @@ function makeLeft(){
         standBox.appendChild(header2);
         standBox.appendChild(make("div", "box3", "pouleStand"));
     }
-    else if (Type == 'CP'){
+    else if (Options.getType()== 'CP'){
         standBox.appendChild(make("div", "box3", "cpStandBox"));
     }
 
@@ -221,7 +255,7 @@ function makeRight(){
 
     let finalArray = ["Finale", "Halve finale", "Kwart Finale", "Achtste Finale"];
     
-    if (Type == 'PF'){
+    if (Options.getType()== 'PF'){
         box.appendChild(subheader0);
         box.appendChild(box5_1);
         box.appendChild(box5_2);
@@ -233,7 +267,7 @@ function makeRight(){
         box5_2.appendChild(box3_2);
         box3_2.appendChild(make("div", "box3", "finalGamesBox"));
     }
-    else if (Type == 'KF'){
+    else if (Options.getType()== 'KF'){
         box.appendChild(subheader0);
         box.appendChild(box5_1);
         box.appendChild(box5_2);
@@ -246,16 +280,16 @@ function makeRight(){
         box3_2.appendChild(make("div", "box3", "finalGamesBox"));
         box3_2.appendChild(make("div", "box3", "finalGamesBox"));
     }
-    else if (Type == 'CP'){
+    else if (Options.getType()== 'CP'){
         box.appendChild(subheader0);
         box.appendChild(box3_1);
-        for (let i = 0; i != Aantal - 1; i++)
+        for (let i = 0; i != Options.getCompRounds(); i++)
             box3_1.appendChild(make("div", "box3", "cpRoundGamesBox"));
     }
-    else if (Type == 'KO'){
+    else if (Options.getType() == 'KO'){
         box.appendChild(subheader0);
         box.appendChild(box3_1);
-        rounds = getBaseLog(2, KO_aantal);
+        rounds = getBaseLog(2, Options.getKnockouts() );
         for (let round = 0; round != rounds;  round++){
             let box4 = make("div", "box4");
             let box5 = make("div", "box5")
@@ -272,22 +306,22 @@ function makeRight(){
             box3_1.appendChild(box4);
         }
     }
-    else if (Type == 'PK'){
+    else if (Options.getType() == 'PK'){
         box.appendChild(tabContent1);
         box.appendChild(tabContent2);
         box.appendChild(buttonsBox);
         tabContent1.appendChild(subheader1);
         tabContent1.appendChild(box3_1);
-        for (let i = 0; i != Aantal / 4;  i++){
+        for (let i = 0; i != Options.getPoules();  i++){
             let box4 = make("div", "box4");
-            box4.appendChild(make("div", "box").appendChild(makeHeader('h1', "Poule " + numToLet(i))));
+            box4.appendChild(make("div", "box").appendChild(makeHeader('h1', "Poule " + num2let(i))));
             box4.appendChild(make("div", "box3", "pouleGames"));
             box4.appendChild(make("div", "box3", "pkPouleStandBox"));
             box3_1.appendChild(box4);
         }
         tabContent2.appendChild(subheader2);
         tabContent2.appendChild(box3_2);
-        rounds = getBaseLog(2, KO_aantal);
+        rounds = getBaseLog(2, Options.getKnockouts() );
         for (let round = 0; round != rounds;  round++){
             let box4 = make("div", "box4");
             let box5 = make("div", "box5")
@@ -307,7 +341,7 @@ function makeRight(){
 }
 
 
-function numToLet(num){
+function num2let(num){
   let s = '', t;
   t = (num) % 26;
   s = String.fromCharCode(65 + t);
@@ -362,7 +396,7 @@ function newKOTable(id_)
     cell_3.appendChild(newNumInput());
     cell_7.appendChild(newNumInput());
     cell_4.appendChild(crText("19:00"));
-    cell_5.appendChild(crText("1"));
+    cell_5.appendChild(crText("Veld 1"));
 
     row_0.appendChild(cell_0);
     row_0.appendChild(cell_1);
@@ -383,29 +417,29 @@ function makeSchedule()
 {
     let finalArray = ["Achtste Finales", "Kwart Finales", "Halve Finales", "Finales"];
 
-     if (Type == 'KO')
+     if (Options.getType() == 'KO')
     {
         let finalSpaces = document.querySelectorAll("#KOfinal");
-        for (let i = 0; i != Aantal - 1; i++) 
+        for (let i = 0; i != Options.getNumbEv() - 1; i++) 
             finalSpaces[i].appendChild(newKOTable(i));
     }
-    else if (Type == 'PF' || Type == 'KF')
+    else if (Options.getType() == 'PF' || Options.getType() == 'KF')
     {
         let pouleSpaces = document.querySelectorAll("#pouleGamesBox");
         for (let i = 0; i != pouleSpaces.length; i++) 
-            pouleSpaces[i].appendChild(newPouleTable(Teams_PF[i], "pf", "Poule " + numToLet(i)));
+            pouleSpaces[i].appendChild(newPouleTable(Teams_PF[i], "pf", "Poule " + num2let(i)));
 
         let finalSpaces = document.querySelectorAll("#finalGamesBox");
         for (let i = 0; i != finalSpaces.length; i++) 
-            finalSpaces[i].appendChild(newFinalTable(Aantal / 2, "finalGame" + i, finalArray[finalArray.length - finalSpaces.length + i]));
+            finalSpaces[i].appendChild(newFinalTable(Options.getNumbEv() / 2, "finalGame" + i, finalArray[finalArray.length - finalSpaces.length + i]));
     }
-    else if (Type == 'CP')
+    else if (Options.getType() == 'CP')
     {
         let compRoundSpaces = document.querySelectorAll("#cpRoundGamesBox");
         for (let i = 0; i != compRoundSpaces.length; i++) 
             compRoundSpaces[i].appendChild(newCompRoundTable(Teams, i));
     }
-    else if (Type == 'PK')
+    else if (Options.getType() == 'PK')
     {
         let pouleSpaces = document.querySelectorAll("#pouleGames");
         for (let i = 0; i != pouleSpaces.length; i++) 
@@ -419,29 +453,29 @@ function makeSchedule()
 
 function makeStandings()
 {
-    if (Type == 'PF' || Type == 'KF'){
+    if (Options.getType() == 'PF' || Options.getType() == 'KF'){
         let standingSpaces = document.querySelectorAll("#pouleStand");
         for (let i = 0; i != standingSpaces.length; i++)
-            standingSpaces[i].appendChild(newStandTable(Aantal / 2));
+            standingSpaces[i].appendChild(newStandTable(Options.getNumbEv() / 2));
     } 
-    if (Type == 'PK'){
+    if (Options.getType() == 'PK'){
         let standingSpaces = document.querySelectorAll("#pkPouleStandBox");
         for (let i = 0; i != standingSpaces.length; i++)
-            standingSpaces[i].appendChild(newStandTable(4));
+            standingSpaces[i].appendChild(newStandTable(Options.getNumbPerPoules()));
     }   
-    if (Type == 'CP'){
+    if (Options.getType() == 'CP'){
         let standingSpaces = document.querySelectorAll("#cpStandBox");
         for (let i = 0; i != standingSpaces.length; i++)
-            standingSpaces[i].appendChild(newStandTable(Aantal));
+            standingSpaces[i].appendChild(newStandTable(Options.getNumb()));
     }  
 }
 
 function makeResults()
 {
-    if (Type == 'PF' || Type == 'KF' || Type == 'CP'){
+    if (Options.getType() == 'PF' || Options.getType() == 'KF' || Options.getType() == 'CP'){
         let standingSpaces = document.querySelectorAll("#finalResult");
         for (let i = 0; i != standingSpaces.length; i++)
-            standingSpaces[i].appendChild(newResultTable(Aantal));
+            standingSpaces[i].appendChild(newResultTable(Options.getNumb()));
     } 
 }
 
@@ -511,8 +545,8 @@ function newStandTable(aantal){
 }
 
 function newPouleTable(teams, class_, header){
-    let nRounds = teams.length - 1;
-    let nGamesPerRound = teams.length / 2;
+    let nRounds = teams.length % 2 + teams.length - 1;
+    let nGamesPerRound = Math.floor(teams.length / 2);
     let pairs = makeRoundRobinPairings(teams);
        
     let table = crType("table");
@@ -572,7 +606,7 @@ function newPouleTable(teams, class_, header){
 }
 
 function newCompRoundTable(teams, round){
-    let nGamesPerRound = teams.length / 2;
+    let nGamesPerRound = Math.floor(teams.length / 2);
     let pairs = makeRoundRobinPairings(teams);
        
     let table = crType("table");
@@ -715,7 +749,7 @@ function upTable(table, teams){
 }
 
 function upTables(){
-    switch(Type){
+    switch(Options.getType()){
         case 'PK':
             let tables = document.getElementsByClassName("standTable");
             for (i = 0; i != tables.length; i++)
@@ -774,11 +808,11 @@ function minutesToTime(minutes) {
 }
 
 function played(item){
-    return item.d_played == Aantal / 2 - 1;
+    return item.d_played == Options.getNumbEv() / Options.getPoules() - 1;
 }
 
 function played1(item){
-    return item.d_played == Aantal - 1;
+    return item.d_played == Options.getNumb() - 1;
 }
 
 function played2(item){
@@ -792,7 +826,7 @@ function upSchedule(){
         pouleGames[i].childNodes[6].innerHTML =  Teams[pouleGames[i].childNodes[6].id].d_name;
     }
 
-    if (Type == 'PF') {
+    if (Options.getType() == 'PF') {
         let finalGames0 = document.querySelectorAll("#finalGame0")
         for (let i = 0; i != finalGames0.length; i++) {
             sort(Teams_PF[0]);
@@ -803,7 +837,7 @@ function upSchedule(){
             finalGames0[i].childNodes[6].innerHTML = Teams_PF[1].every(played) ? Teams_PF[1][i].d_name : i + 1 + 'e poule B';
         }
     }
-    if (Type == 'KF') {
+    if (Options.getType() == 'KF') {
         let finalGames0 = document.querySelectorAll("#finalGame0")
         for (let i = 0; i != finalGames0.length; i++) {
             sort(Teams_PF[0]);
@@ -829,9 +863,9 @@ function upSchedule(){
         }
     }
 
-    else if (Type == 'KO'){
+    else if (Options.getType() == 'KO'){
         let KOfinals = document.getElementsByClassName("KOgame");
-        for (round = 0; round != getBaseLog(2, Aantal); round++) {
+        for (round = 0; round != getBaseLog(2, Options.getNumbEv() ); round++) {
             let roundGames = GamesPerRound(round);
             let roundIndex = 0;
             for (idx = round; idx != 0; idx--)
@@ -844,16 +878,18 @@ function upSchedule(){
             } 
         }       
     }
-    else if (Type == 'PK'){
-        for (let i = 0; i != Teams_PK.length; i++){
+    else if (Options.getType() == 'PK'){
+        for (let i = 0, idx = 0, front = 0, back = Teams_KO[0].length - 1; i != Teams_PK.length; i++){
             sort(Teams_PK[i]);
-            let pouleFinished = Teams_PK[i].every(played2)
-            Teams_KO[0][2 * i] = pouleFinished ? Teams_PK[i][0] : undefined;
-            Teams_KO[0][2 * i + 1] = pouleFinished ? Teams_PK[i][1] : undefined;
-        }
+            for (let j = 0; j != Options.getthroughPoule(); j++, idx++){
+                placing = isEven(idx) ? front++ : back--;
+                Teams_KO[0][placing] = Teams_PK[i].every(played) ? Teams_PK[i][j] : undefined;
+            }
+            //console.log('Teams_KO', Teams_KO);
+        }        
 
         let KOfinals = document.getElementsByClassName("KOgame");
-        for (round = 0; round != getBaseLog(2, KO_aantal); round++) {
+        for (round = 0; round != getBaseLog(2, Options.getKnockouts() ); round++) {
             let roundGames = GamesPerRound(round);
             let roundIndex = 0;
             for (idx = round; idx != 0; idx--)
@@ -873,12 +909,16 @@ function isEven(n) {
 }
 
 function GamesPerRound(round){
-    return Math.pow(2, getBaseLog(2, KO_aantal) - 1 - round);
+    return Math.max(Math.pow(2, getBaseLog(2, Options.getKnockouts() ) - 1 - round), 1);
 }
 
 function upResults(){
     let tables = document.getElementsByClassName("resultTable");
-    for (let i = 0; i != Aantal; i++) 
+    if (Options.getType() == 'CP') 
+        for (let i = 0; i != Options.getNumb() ; i++) 
+            tables[0].childNodes[i + 1].childNodes[1].innerHTML = Teams_CP.every(played1) ? Teams_CP[i].d_name : "";
+    else
+        for (let i = 0; i != Options.getNumb() ; i++) 
             tables[0].childNodes[i + 1].childNodes[1].innerHTML = typeof(Teams_FI[i]) != 'undefined' ? Teams_FI[i].d_name : "";
 }
 
@@ -930,21 +970,21 @@ function processScore(a, b, score1, score2){
 function newScore(game){    
 
     Teams.forEach(reset);
-    if (Type == 'PF' || Type == 'KF' || Type == 'CP' || Type == 'PK') {
+    if (Options.getType() == 'PF' || Options.getType() == 'KF' || Options.getType() == 'CP' || Options.getType() == 'PK') {
         let pouleGames = document.querySelectorAll("#pouleGame");
         pouleGames.forEach(processPouleGame)
     }
-    if (Type == 'PF') {
+    if (Options.getType() == 'PF') {
         let finalGames = document.querySelectorAll("#finalGame0");
         finalGames.forEach(processFinalGame)
     }
-    if (Type == 'KF') {
+    if (Options.getType() == 'KF') {
         let finalGames = document.querySelectorAll("#finalGame0");
         finalGames.forEach(processFinalGame1)
         let finalGames1 = document.querySelectorAll("#finalGame1");
         finalGames1.forEach(processFinalGame)
     }
-    if (Type == 'KO' || Type == 'PK'){
+    if (Options.getType() == 'KO' || Options.getType() == 'PK'){
         let KOfinals = document.querySelectorAll(".KOgame");
         KOfinals.forEach(processKOGame);
     }   
@@ -953,7 +993,7 @@ function newScore(game){
 function updateTournament(){
     upTables();
     upSchedule();
-    if (Type != 'KO' && Type != 'PK'){
+    if (Options.getType() != 'KO' && Options.getType() != 'PK'){
         upResults();
     }
 }
@@ -991,12 +1031,11 @@ function processKOGame(game){
     let bothKnown = typeof(team1) != 'undefined' && typeof(team2) != 'undefined';
     let scoreKnown = score1.length != 0 && score2.length != 0 && score1 != score2;
     game.className += bothKnown && scoreKnown ? " active" : "";
-    let roundN = findKORound(gID, KO_aantal);
-    let gameN = findKOGame(gID, KO_aantal);
+    let roundN = findKORound(gID, Options.getKnockouts());
+    let gameN = findKOGame(gID, Options.getKnockouts());
     Teams_KO[roundN + 1][gameN] = bothKnown && scoreKnown ? Number(score1) > Number(score2) ? team1 : team2 : undefined;
     game.childNodes[0].className += bothKnown && scoreKnown && Number(score1) > Number(score2) ? " active" : "";     
     game.childNodes[1].className += bothKnown && scoreKnown && Number(score1) < Number(score2) ? " active" : "";   
-    console.log('Teams_KO', Teams_KO);
     updateTournament();
 }
 
@@ -1053,41 +1092,42 @@ function processPouleGame(game){
 }
 
 function fillTeams() {
-    for (let i = 0; i != Aantal; i++) {
-    Teams[i] = new Team(i, TeamNamen[i]);
-    Teams[i].d_left = i < Aantal / 2;
-    Teams_CP[i] = Teams[i];
+    for (let i = 0; i != Options.getNumb(); i++) {
+        Teams[i] = new Team(i, Options.getName(i));
+    }
+
+    for (let i = 0; i != Options.getNumb(); i++) {
+        Teams_CP[i] = Teams[i];
     }
 
     for (let i = 0; i != 2; i++)
-        Teams_PF[i] = Teams.slice((Aantal / 2) * i, (Aantal / 2) * (i + 1));  
+        Teams_PF[i] = Teams.slice((Options.getNumbEv() / 2) * i, (Options.getNumbEv() / 2) * (i + 1));  
 
-    for (let i = 0; i != Aantal / 4; i++) 
-        Teams_PK[i] = Teams.slice(4 * i, 4 * (i + 1));
+    for (let i = 0; i != Options.getPoules(); i++) 
+        Teams_PK[i] = Teams.slice(Options.getNumbPerPoules() * i, Options.getNumbPerPoules() * (i + 1));
       
     for (let i = 0; i != Teams_KO.length; i++) 
-        Teams_KO[i] = new Array(Aantal); 
+        Teams_KO[i] = new Array(GamesPerRound(i) * 2); 
 
-    if (Type == 'KO')
+    if (Options.getType() == 'KO')
         Teams_KO[0] = Teams;   
 
-    if (Type != 'KO' && Type != 'PK') 
+    if (Options.getType() != 'KO' && Options.getType() != 'PK') 
         makeLeft();
 }
 
-let Naam, Type, Aantal, Begintijd, Speelduur, Pauze, KO_aantal;
-let TeamNamen = [];
+Options = new Options();
+console.log("Options: ", Options);
 
-// process input from memory
-processInput();
-
-Teams = new Array(Aantal);
+Teams = new Array(Options.getNumb());
 Teams_PF = new Array(2);
-Teams_CP = new Array(Aantal);
-Teams_PK = new Array(Aantal / 4);
-Teams_KO = new Array(getBaseLog(2, Aantal) + 1);
-Teams_FI = new Array(Aantal);
-Teams_FI1 = new Array(Aantal);
+Teams_CP = new Array(Options.getNumb());
+Teams_PK = new Array(Options.getPoules());
+Teams_KO = new Array(getBaseLog(2, Options.getKnockouts())+1);
+Teams_FI = new Array(Options.getNumbEv());
+Teams_FI1 = new Array(Options.getNumbEv());
+
+document.getElementById("displayName").innerHTML = Options.d_name;
 
 fillTeams();
 makeRight();
@@ -1096,7 +1136,7 @@ makeStandings();
 makeResults();
 updateTournament();
 
-if (Type == 'KO' || Type == 'PK') {
+if (Options.getType() == 'KO' || Options.getType() == 'PK') {
     let box = document.getElementsByClassName("right");
     box[0].className += " active";
     let box1 = document.getElementsByClassName("outLineRight");

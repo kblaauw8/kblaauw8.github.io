@@ -1,3 +1,40 @@
+function showOptions(evt, tabName) {
+    let type = document.getElementById('type').value;
+
+    POcontainers = document.getElementsByClassName("labelInputContainer PO");
+    KOcontainers = document.getElementsByClassName("labelInputContainer KO");
+    CPcontainers = document.getElementsByClassName("labelInputContainer CP");
+    hide(POcontainers);
+    hide(KOcontainers);
+    hide(CPcontainers);
+
+    switch(type){
+        case 'CP':
+            show(CPcontainers);        
+            break;
+        case 'PK':
+            show(POcontainers);
+            show(KOcontainers);
+            break;
+        case 'KO':
+            show(KOcontainers);
+            break;
+        default:
+            break;
+    }
+
+}
+
+function hide(array){
+    for (i = 0; i < array.length; i++) 
+        array[i].style.display = "none";
+}
+
+function show(array){
+    for (i = 0; i < array.length; i++) 
+        array[i].style.display = "flex";
+}
+
 function addOption(opt){
     let option = document.createElement('option');
     option.setAttribute('value', opt);
@@ -5,9 +42,23 @@ function addOption(opt){
     return option;
 }
 
+function up1(step, max, id) {
+    document.getElementById(id).value = parseInt(document.getElementById(id).value) + parseInt(step);
+    if (document.getElementById(id).value >= parseInt(max)) {
+        document.getElementById(id).value = max;
+    }
+}
+function down1(step, min, id) {
+    document.getElementById(id).value = parseInt(document.getElementById(id).value) - parseInt(step);
+    if (document.getElementById(id).value <= parseInt(min)) {
+        document.getElementById(id).value = min;
+    }
+}
+
+
 function addPossibleNumbers(){
     let type = document.getElementById('type').value;
-    let box = document.getElementById('aantal');
+    let box = document.getElementById('nTeams');
     let nOpts = 8;
 
     while (box.childElementCount != 1) 
@@ -43,48 +94,99 @@ function addPossibleNumbers(){
     }
 }
 
-function addFields(){
-    let number = document.getElementById("aantal").value;
-    let container = document.getElementById("fieldContainer");
-    while (container.hasChildNodes()) {        container.removeChild(container.lastChild);
+function num2let(num){
+  let s = '', t;
+  t = (num) % 26;
+  s = String.fromCharCode(65 + t);
+  return s
+}
+
+function makeHeader(type, text)
+{
+    let nHeader = document.createElement(type);
+    nHeader.setAttribute("class", "custom1");
+    let nText = document.createTextNode(text);
+    nHeader.appendChild(nText);
+    return nHeader;
+}
+
+function addPouleFields(){
+    let npoules = document.getElementById("nPoules").value;
+    let container = document.getElementById("pouleFieldContainer");
+    let type = document.getElementById("type").value;
+    while (container.hasChildNodes()) {container.removeChild(container.lastChild);
     }
-    for (let i=0;i<number;i++){
-        let newDiv = document.createElement("div");
-        newDiv.setAttribute("class", "labelInputContainer1");
-        
-        let newInput = document.createElement("input");
-        newInput.type = "text";
-        newInput.setAttribute("class", "ui");
-        newInput.setAttribute("id", "teamName");
-        newInput.setAttribute("required", "true");
-        
-        let newLabel = document.createElement("label");
-        let newText = document.createTextNode("Team " + (i+1));
-        newLabel.appendChild(newText);
-        
-        newDiv.appendChild(newLabel);
-        newDiv.appendChild(newInput);
-        container.appendChild(newDiv);
+    for (let i=0;i<npoules;i++){
+        if (type == 'CP' || type == 'KO')
+            text = "Deelnemers";
+        else
+            text = "Poule " + num2let(i);
+        let poulebox = document.createElement("div");
+        poulebox.setAttribute("class", "poulebox");
+        let subheader = document.createElement("div");
+        subheader.setAttribute("class", "subheader_poule");
+        subheader.appendChild(makeHeader('h2', text));
+        let cont = document.createElement("div");
+        cont.setAttribute("class", "teamFieldContainer");
+        poulebox.appendChild(subheader);
+        poulebox.appendChild(cont);
+        container.appendChild(poulebox);
+    }
+    addTeamFields();
+}
+
+function addTeamFields(){
+    let nteams = document.getElementById("nTeams").value;
+    let npoules = document.getElementById("nPoules").value;
+    let containers = document.getElementsByClassName("teamFieldContainer");
+    let tobeplaced = nteams;
+    let tobefilled = npoules;
+    let teamindex = 1;
+    for (let i=0;i!=containers.length;i++){
+        while (containers[i].hasChildNodes()) {containers[i].removeChild(containers[i].lastChild);
+        }
+        let ntpp = Math.ceil(tobeplaced/tobefilled);
+        let stop = Math.min(ntpp, tobeplaced);
+        console.log('tobeplaced', tobeplaced);
+        console.log('tobefilled', tobefilled);
+        console.log('ntpp', ntpp);
+        console.log('stop', stop);
+        for(let j=0;j!=stop;j++){
+            //let newDiv = document.createElement("div");
+            //newDiv.setAttribute("class", "labelInputContainer1");
+            let newInput = document.createElement("input");
+            newInput.type = "text";
+            newInput.setAttribute("class", "teamInput");
+            newInput.setAttribute("required", "true");
+            newInput.setAttribute("placeholder", "Team " + teamindex++);
+            //newDiv.appendChild(newInput);
+            containers[i].appendChild(newInput);
+            tobeplaced--;
+        }
+        tobefilled--;
     }
 }
 
 function saveVariables(){
     let naam = document.getElementById("naam").value;
     let type = document.getElementById("type").value;
-    let aantal = Number(document.getElementById("aantal").value);
-    let begintijd = document.getElementById("begintijd").value;
-    let speelduur = document.getElementById("speelduur").value;
-    let pauze = document.getElementById("pauze").value;
-    let teamNames = document.querySelectorAll("#teamName");
-    for (let i = 0; i < teamNames.length; i++) {
+    let nTeams = Number(document.getElementById("nTeams").value);
+    let nPoules= Number(document.getElementById("nPoules").value);
+    let nThroughPoule = Number(document.getElementById("nThroughPoule").value);
+    //let begintijd = document.getElementById("begintijd").value;
+    //let speelduur = document.getElementById("speelduur").value;
+    //let pauze = document.getElementById("pauze").value;
+    let teamNames = document.getElementsByClassName("teamInput");
+    for (let i = 0; i < teamNames.length; i++)
         sessionStorage.setItem('team' + i, teamNames[i].value);
-    }
     sessionStorage.setItem('naam', naam);
     sessionStorage.setItem('type', type);
-    sessionStorage.setItem('aantal', aantal);  
-    sessionStorage.setItem('begintijd', begintijd);
-    sessionStorage.setItem('speelduur', speelduur);
-    sessionStorage.setItem('pauze', pauze);
+    sessionStorage.setItem('nTeams', nTeams);  
+    sessionStorage.setItem('nPoules', nPoules);
+    sessionStorage.setItem('nThroughPoule', nThroughPoule);
+    //sessionStorage.setItem('begintijd', begintijd);
+    //sessionStorage.setItem('speelduur', speelduur);
+    //sessionStorage.setItem('pauze', pauze);
 }
 
 // There are many ways to pick a DOM node; here we get the form itself and the naam
@@ -98,6 +200,34 @@ form.addEventListener('submit', function (event) {
     event.preventDefault();
 })
 
-addPossibleNumbers();
-addFields();
+function setOptions(){
+    switch(document.getElementById('type').value){
+        case 'CP':
+            document.getElementById("nPoules").value = 1;        
+            break;
+        case 'KF':
+            document.getElementById("nPoules").value = 2;  
+            break;
+        case 'PF':
+            document.getElementById("nPoules").value = 2;  
+            break;
+        case 'PK':
+            document.getElementById("nPoules").value = 4;
+            break;
+        case 'KO':
+            document.getElementById("nPoules").value = 1;
+            break;
+        default:
+            break;
+    }
+    addPouleFields();  
+}
+
+function matchOptions(){
+    document.getElementById("nThroughPoule").value = document.getElementById("nPoules").value;
+}
+
+showOptions();
+//addPossibleNumbers();
+setOptions();
 

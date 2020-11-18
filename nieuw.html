@@ -8,6 +8,7 @@
         <link href= "styles/style.css" rel="stylesheet">
         <link href= "styles/navbar.css" rel="stylesheet">
         <link href= "styles/buttons.css" rel="stylesheet">
+        <link href= "styles/nieuw.css" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@600&display=swap" rel="stylesheet"> 
         <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@600&display=swap" rel="stylesheet"> 
         <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet"> 
@@ -33,51 +34,113 @@
 
     <!-- The flexible grid (content) -->
     <div class="row">  
-        <div class="left1">  <!-- class left-->
-            <div class="outLineLeft" id="left2">
-                <form>
-                    <h1>Nieuw toernooi</h1>
-                    <div class="labelInputContainer">
-                        <label for="naam">Naam</label>
-                        <input class="ui" id="naam" type="text" value="Jonne Hindriks Jeugdtoernooi" required>
+        <form>
+            <div class="box1">
+                <h1>Nieuw toernooi</h1>
+                <div class="labelInputContainer">
+                    <label for="naam">Naam</label>
+                    <input class="ui" id="naam" type="text" value="Jonne Hindriks Jeugdtoernooi" required>
+                </div>
+                <div class="labelInputContainer">
+                    <label for="type">Type</label>
+                    <select class="ui" id="type" onchange="showOptions(); setOptions()" required>
+                        <option value='CP'>Competitie</option>
+                        <option value='KO'>Knockout</option>
+                        <option value='PK'>Poule en Knockout</option>
+                        <option value='PF'>Poule en Finals</option>
+                        <option value='KF'>Poule en CrossFinals</option>
+                    </select>
+                </div>
+                <div class="labelInputContainer">
+                    <label for="aantal">#Teams</label>
+                    <div class="input-group">
+                        <button type="button" id="down" class="btn" onclick="down1('1', '0', 'nTeams'); addTeamFields()">-</button>
+                        <input type="text" id="nTeams" class="form-control input-number" value="4" required>
+                        <button type="button" id="up" class="btn" onclick="up1('1', '32', 'nTeams'); addTeamFields()">+</button>
                     </div>
-                    <div class="labelInputContainer">
-                        <label for="type">Type</label>
-                        <select class="ui" id="type" onchange="addPossibleNumbers()" required>
-                            <option value='PF'>Poule en Finals</option>
-                            <option value='KF'>Poule en CrossFinals</option>
-                            <option value='PK'>Poule and Knockout</option>
-                            <option value='CP'>Competition</option>
-                            <option value='KO'>Knockout</option>
-                        </select>
+                </div>
+                <div class="labelInputContainer PO">
+                    <label for="leaguePlays">#Poules</label>
+                    <div class="input-group">
+                        <button type="button" id="down" class="btn" onclick="down1('1', '0', 'nPoules'); addPouleFields(); matchOptions()">-</button>
+                        <input type="text" id="nPoules" class="form-control input-number" value="1" required>
+                        <button type="button" id="up" class="btn" onclick="up1('1', '32', 'nPoules'); addPouleFields(); matchOptions()">+</button>
                     </div>
-                    <div class="labelInputContainer">
-                        <label for="aantal">Aantal teams</label>
-                        <select class="ui" id="aantal" onchange="addFields()" required>
-                            <option value="">Kies aantal </option>
-                        </select>
+                </div>
+                <div class="labelInputContainer PO">
+                    <label for="knockoutOpzet">#Door per poule</label>
+                    <div class="input-group">
+                        <button type="button" id="down" class="btn" onclick="down1('1', '1', 'nThroughPoule')">-</button>
+                        <input type="text" id="nThroughPoule" class="form-control input-number" value="1" required>
+                        <button type="button" id="up" class="btn" onclick="up1('1', '2', 'nThroughPoule')">+</button>
                     </div>
-                    <div id="fieldContainer">
-                    </div>
-                    <div class="labelInputContainer">
-                        <label for="begintijd">Aanvangstijd</label>
-                        <input class="ui" type="time" id="begintijd" name="appt"
-                        min="00:00" max="24:00" value="19:00" required>
-                    </div>
-                    <div class="labelInputContainer">
-                        <label for="speelduur">Speelduur</label>
-                        <input class="ui" type="time" id="speelduur" name="appt"
-                        min="00:00" max="24:00" value="00:15" required>
-                    </div>
-                    <div class="labelInputContainer">
-                        <label for="pauze">Tijd tussen wedstrijden</label>
-                        <input class="ui" type="time" id="pauze" name="appt"
-                        min="00:00" max="24:00" value="00:05" required>
-                    </div>
-                    <button class="knopje" type="submit"><h2>Maak Toernooi</h2></button>
-                </form>
+                </div>
+                <div class="labelInputContainer CP">
+                    <label for="leaguePlays">Opzet Competitie</label>
+                    <select class="ui" id="opzet_poule">
+                        <option selected="selected" value="1">Halve competitie</option>
+                        <option value="1">Hele competitie</option>
+                    </select>
+                </div>
+                <div class="labelInputContainer PO">
+                    <label for="leaguePlays">Opzet Poulefase</label>
+                    <select class="ui" id="opzet_poule">
+                        <option selected="selected" value="1">Halve competitie</option>
+                        <option value="1">Hele competitie</option>
+                    </select>
+                </div>
+                <div class="labelInputContainer KO">
+                    <label for="leaguePlays">Opzet Knockoutfase</label>
+                    <select class="ui" id="leaguePlays">
+                        <option selected="selected" value="1">1 wedstrijd per confrontatie</option>
+                        <option value="2">2 wedstrijden per confrontatie</option>
+                    </select>
+                </div>
+                <div class="labelInputContainer KO">
+                    <label for="leaguePlays">Opzet Finale</label>
+                    <select class="ui" id="leaguePlays">
+                        <option selected="selected" value="8">1 wedstrijd</option>
+                        <option value="16">2 wedstrijden</option>
+                    </select>
+                </div>
+                
+                
+               <!--  <div class="labelInputContainer">
+                    <label for="begintijd">Aanvangstijd</label>
+                    <input class="ui" type="time" id="begintijd" name="appt"
+                    min="00:00" max="24:00" value="19:00" required>
+                </div>
+                <div class="labelInputContainer">
+                    <label for="speelduur">Speelduur</label>
+                    <input class="ui" type="time" id="speelduur" name="appt"
+                    min="00:00" max="24:00" value="00:15" required>
+                </div>
+                <div class="labelInputContainer">
+                    <label for="pauze">Tijd tussen wedstrijden</label>
+                    <input class="ui" type="time" id="pauze" name="appt"
+                    min="00:00" max="24:00" value="00:05" required>
+                </div> -->
+                
             </div>
-        </div>
+            <div class="box2" id="pouleFieldContainer">
+                <div class="poulebox">
+                    <div class="subheader">
+                        <h2>Poule A</h2>
+                    </div>
+                    <div id="teamFieldContainer">
+                    </div>
+                </div>
+                <div class="poulebox">
+                    <div class="subheader">
+                    <h2>Poule B</h2>
+                    </div>
+                    dag hoor
+                </div>
+            </div> 
+            <div class="box2">
+                <button class="knopje_nieuw" type="submit"><h2>Maak Toernooi</h2></button> 
+            </div>      
+        </form>
     </div>     
     <!-- Footer -->
     <!-- <div class="footer">
