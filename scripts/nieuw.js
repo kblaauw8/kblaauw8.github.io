@@ -54,8 +54,15 @@ function down1(step, min, id) {
         document.getElementById(id).value = min;
     }
 }
-
-
+function down2(step, id) {
+    let type = document.getElementById('type').value;
+    let min = type == 'PK' ? Math.max(document.getElementById('nPoules').value, 2) : 2;
+    console.log('min: ', min);
+    document.getElementById(id).value = parseInt(document.getElementById(id).value) - parseInt(step);
+    if (document.getElementById(id).value <= parseInt(min)) {
+        document.getElementById(id).value = min;
+    }
+}
 function addPossibleNumbers(){
     let type = document.getElementById('type').value;
     let box = document.getElementById('nTeams');
@@ -147,10 +154,6 @@ function addTeamFields(){
         }
         let ntpp = Math.ceil(tobeplaced/tobefilled);
         let stop = Math.min(ntpp, tobeplaced);
-        console.log('tobeplaced', tobeplaced);
-        console.log('tobefilled', tobefilled);
-        console.log('ntpp', ntpp);
-        console.log('stop', stop);
         for(let j=0;j!=stop;j++){
             //let newDiv = document.createElement("div");
             //newDiv.setAttribute("class", "labelInputContainer1");
@@ -212,7 +215,7 @@ function setOptions(){
             document.getElementById("nPoules").value = 2;  
             break;
         case 'PK':
-            document.getElementById("nPoules").value = 4;
+            document.getElementById("nPoules").value = 2;
             break;
         case 'KO':
             document.getElementById("nPoules").value = 1;
@@ -221,10 +224,14 @@ function setOptions(){
             break;
     }
     addPouleFields();  
+    matchOptions();
+    addTeamFields();
 }
 
 function matchOptions(){
-    document.getElementById("nThroughPoule").value = document.getElementById("nPoules").value;
+    if (parseInt(document.getElementById("nTeams").value) < parseInt(document.getElementById("nPoules").value))
+        document.getElementById("nTeams").value = parseInt(document.getElementById("nPoules").value);
+    addTeamFields();
 }
 
 showOptions();

@@ -54,7 +54,7 @@
                 <div class="labelInputContainer">
                     <label for="aantal">#Teams</label>
                     <div class="input-group">
-                        <button type="button" id="down" class="btn" onclick="down1('1', '0', 'nTeams'); addTeamFields()">-</button>
+                        <button type="button" id="down" class="btn" onclick="down2('1', 'nTeams'); addTeamFields()">-</button>
                         <input type="text" id="nTeams" class="form-control input-number" value="4" required>
                         <button type="button" id="up" class="btn" onclick="up1('1', '32', 'nTeams'); addTeamFields()">+</button>
                     </div>
@@ -62,7 +62,7 @@
                 <div class="labelInputContainer PO">
                     <label for="leaguePlays">#Poules</label>
                     <div class="input-group">
-                        <button type="button" id="down" class="btn" onclick="down1('1', '0', 'nPoules'); addPouleFields(); matchOptions()">-</button>
+                        <button type="button" id="down" class="btn" onclick="down1('1', '1', 'nPoules'); addPouleFields(); matchOptions()">-</button>
                         <input type="text" id="nPoules" class="form-control input-number" value="1" required>
                         <button type="button" id="up" class="btn" onclick="up1('1', '32', 'nPoules'); addPouleFields(); matchOptions()">+</button>
                     </div>
