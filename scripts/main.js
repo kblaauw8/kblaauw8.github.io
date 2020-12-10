@@ -45,6 +45,10 @@ function Options() {
     this.d_teamNamen = new Array(this.d_nTeams);
     this.d_teamsPerPoule = new Array(this.d_poules);
     this.d_compRounds = this.d_numbev - 1;
+    this.d_playsCP = sessionStorage.getItem('nPlaysCP');
+    this.d_playsPO = sessionStorage.getItem('nPlaysPO');
+    this.d_playsKO = sessionStorage.getItem('nPlaysKO');
+    this.d_playsFI = sessionStorage.getItem('nPlaysFI');
     this.addName = function(idx, name) { 
         this.d_teamNamen[idx] = name;
     } 
@@ -80,6 +84,18 @@ function Options() {
     }
     this.getNumbPoule = function(idx) {
         return this.d_teamsPerPoule[idx];
+    }
+    this.getPlaysCP = function() {
+        return this.d_playsCP
+    }
+    this.getPlaysPO = function() {
+        return this.d_playsPO
+    }
+    this.getPlaysKO = function() {
+        return this.d_playsKO
+    }
+    this.getPlaysFI = function() {
+        return this.d_playsFI
     }
     for (let i = 0; i !=this.d_numb; i++) 
         this.addName(i, sessionStorage.getItem('team' + i));
@@ -132,7 +148,6 @@ function compare(team1, team2){
         return false;
     else 
         return true;
-    
 }
 
 function makeRoundRobinPairings(teams) {
@@ -141,26 +156,34 @@ function makeRoundRobinPairings(teams) {
         players.push(new Team(Options.getNumb(), 'DUMMY'));
     
     let playerCount = players.length;
-    let rounds = playerCount - 1;
+    let halfRounds = playerCount - 1;
+    let rounds = halfRounds * 2;
     let half = playerCount / 2;
     let tournamentPairings = [];
     let playerIndexes = players.map((_, i) => i).slice(1);
 
-    for (let round = 0; round < rounds; round++) {
+    for (let round = 0; round != rounds; round++) {
         let roundPairings = [];
         let newPlayerIndexes = [0].concat(playerIndexes);
         let firstHalf = newPlayerIndexes.slice(0, half);
         let secondHalf = newPlayerIndexes.slice(half, playerCount).reverse();
 
         for (let i = 0; i < firstHalf.length; i++) {
+            let pairing = [];
             if (players[firstHalf[i]].getName() == "DUMMY" || players[secondHalf[i]].getName() == "DUMMY")
                 continue;
-            let pairing = round % 2 == 0 ?
-            [players[firstHalf[i]], players[secondHalf[i]]]:
-            [players[secondHalf[i]], players[firstHalf[i]]];
+            if (round < halfRounds) {
+                pairing = round % 2 == 0 ?
+                [players[firstHalf[i]], players[secondHalf[i]]]:
+                [players[secondHalf[i]], players[firstHalf[i]]];
+            }
+            else {
+                pairing = round % 2 == 0 ?
+                [players[firstHalf[i]], players[secondHalf[i]]]:
+                [players[secondHalf[i]], players[firstHalf[i]]];   
+            }
             roundPairings.push(pairing);
         }
-
         playerIndexes.push(playerIndexes.shift());
         tournamentPairings.push(roundPairings);
     }
@@ -266,7 +289,7 @@ function makeRight(){
     subheader1.appendChild(makeHeader('h2', "Groepsfase"));
     subheader2.appendChild(makeHeader('h2', "Knockout-fase"));
 
-    let finalArray = ["Finale", "Halve finale", "Kwart Finale", "Achtste Finale"];
+    let finalArray = ["Finale", "Halve Finales", "Kwart Finales", "Achtste Finales"];
     
     if (Options.getType()== 'PF'){
         box.appendChild(subheader0);
@@ -296,7 +319,7 @@ function makeRight(){
     else if (Options.getType()== 'CP'){
         box.appendChild(subheader0);
         box.appendChild(box3_1);
-        for (let i = 0; i != Options.getCompRounds(); i++)
+        for (let i = 0; i != Options.getPlaysCP() * Options.getCompRounds(); i++)
             box3_1.appendChild(make("div", "box3", "cpRoundGamesBox"));
     }
     else if (Options.getType() == 'KO'){
@@ -433,13 +456,12 @@ function newKOTable(id_)
 
 function makeSchedule()
 {
-    let finalArray = ["Achtste Finales", "Kwart Finales", "Halve Finales", "Finales"];
-
-     if (Options.getType() == 'KO')
+    if (Options.getType() == 'KO')
     {
         let finalSpaces = document.querySelectorAll("#KOfinal");
-        for (let i = 0; i != Options.getNumbEv() - 1; i++) 
-            finalSpaces[i].appendChild(newKOTable(i));
+        for (let i = 0; i != Options.getNumbEv() - 2; i++) 
+                finalSpaces[i].appendChild(newKOTable2(i, Options.getPlaysKO()));
+        finalSpaces[Options.getNumbEv() - 2].appendChild(newKOTable2(Options.getNumbEv() - 2, Options.getPlaysFI()));
     }
     else if (Options.getType() == 'PF')
     {
@@ -473,8 +495,10 @@ function makeSchedule()
             pouleSpaces[i].appendChild(newPouleTable(Teams_PK[i], "pk", "Groepswedstrijden"));
 
         let finalSpaces = document.querySelectorAll("#KOfinal");
-        for (let i = 0; i != finalSpaces.length; i++) 
-            finalSpaces[i].appendChild(newKOTable(i));
+        for (let i = 0; i != finalSpaces.length - 1; i++) 
+            finalSpaces[i].appendChild(newKOTable2(i, Options.getPlaysKO()));
+        finalSpaces[finalSpaces.length - 1].appendChild(newKOTable2(finalSpaces.length - 1, Options.getPlaysFI()));
+
     }
 }
 
@@ -572,7 +596,7 @@ function newStandTable(aantal){
 }
 
 function newPouleTable(teams, class_, header){
-    let nRounds = teams.length % 2 + teams.length - 1;
+    let nRounds = Options.getPlaysPO() * (teams.length % 2 + teams.length - 1);
     let nGamesPerRound = Math.floor(teams.length / 2);
     let pairs = makeRoundRobinPairings(teams);
        
@@ -611,6 +635,8 @@ function newPouleTable(teams, class_, header){
             let cell_10 = crType("td");
             row_2.setAttribute("class", "game");
             row_2.setAttribute("id", "pouleGame")
+            if (game == nGamesPerRound - 1 && round != nRounds - 1)
+                row_2.className += " lastRow";
             cell_6.appendChild(crText(team1.d_name));
             cell_10.appendChild(crText(team2.d_name));
             cell_6.setAttribute("id", team1.d_number);
@@ -743,6 +769,53 @@ function newFinalTable(aantal, gameID, header){
     return table;
 }
 
+function newKOTable2(id_, games)
+{
+    let table = crType("table");
+    table.setAttribute("class", "KOgame2");
+    table.setAttribute("id", id_);
+
+    let row_1 = crType("tr");
+    let cell_1 = crType("th");
+    let cell_2 = crType("th");
+    let cell_3 = crType("th");
+    cell_3.setAttribute("colspan", 5);
+    cell_1.appendChild(crText("Tijd"));
+    cell_2.appendChild(crText("Veld"));
+    cell_3.appendChild(crText("Teams"));
+    row_1.appendChild(cell_1);
+    row_1.appendChild(cell_2);
+    row_1.appendChild(cell_3);
+    table.appendChild(row_1);
+    
+    for (let game = 0; game != games; game++){
+            let row_2 = crType("tr");
+            let cell_4 = crType("td");
+            let cell_5 = crType("td");
+            let cell_6 = crType("td");
+            let cell_7 = crType("td");
+            let cell_8 = crType("td");
+            let cell_9 = crType("td");
+            let cell_10 = crType("td");
+            row_2.setAttribute("class", "game");
+            cell_4.setAttribute("id", game);
+            cell_4.appendChild(crText("19:00"));
+            cell_5.appendChild(crText("1"));
+            cell_8.appendChild(crText("-"));
+            cell_7.appendChild(newNumInput());
+            cell_9.appendChild(newNumInput());
+            row_2.appendChild(cell_4);
+            row_2.appendChild(cell_5);
+            row_2.appendChild(cell_6);
+            row_2.appendChild(cell_7);
+            row_2.appendChild(cell_8);
+            row_2.appendChild(cell_9);
+            row_2.appendChild(cell_10);
+            table.appendChild(row_2);
+        }
+    return table;
+}
+
 function crType(type){
     return document.createElement(type);
 }
@@ -842,10 +915,14 @@ function upSchedule(){
     }
 
     if (Options.getType() == 'PF') {
-        let finalGames0 = document.querySelectorAll("#finalGame0")
+        let finalGames0 = document.querySelectorAll("#finalGame0") 
         for (let i = 0; i != finalGames0.length; i++) {
             sort(Teams_PF[0]);
             sort(Teams_PF[1]);
+            finalGames0[i].childNodes[2].className = finalGames0[i].childNodes[2].className.replace("fade", "");
+            finalGames0[i].childNodes[6].className = finalGames0[i].childNodes[6].className.replace("fade", "");
+            finalGames0[i].childNodes[2].className += Teams_PF[0].every(x => x.getPlayed() == (Options.getNumbPoule(0) - 1)) ? " fade" : "";
+            finalGames0[i].childNodes[6].className += Teams_PF[1].every(x => x.getPlayed() == (Options.getNumbPoule(1) - 1)) ? " fade" : "";
             finalGames0[i].childNodes[2].id = Teams_PF[0].every(x => x.getPlayed() == (Options.getNumbPoule(0) - 1)) ? Teams_PF[0][i].d_number : undefined;
             finalGames0[i].childNodes[6].id = Teams_PF[1].every(x => x.getPlayed() == (Options.getNumbPoule(1) - 1)) ? Teams_PF[1][i].d_number : undefined;
             finalGames0[i].childNodes[2].innerHTML = Teams_PF[0].every(x => x.getPlayed() == (Options.getNumbPoule(0) - 1)) ? Teams_PF[0][i].d_name : i + 1 + 'e poule A';
@@ -862,6 +939,10 @@ function upSchedule(){
             idx3 = i - (i % 2);
             tekst1 = isEven(i) ? "poule A" : "poule B";
             tekst2 = isEven(i) ? "poule B" : "poule A";
+            finalGames0[i].childNodes[2].className = finalGames0[i].childNodes[2].className.replace("fade", "");
+            finalGames0[i].childNodes[6].className = finalGames0[i].childNodes[6].className.replace("fade", "");
+            finalGames0[i].childNodes[2].className += Teams_PF[idx1].every(x => x.getPlayed() == (Options.getNumbPoule(idx1) - 1)) ? " fade" : "";
+            finalGames0[i].childNodes[6].className += Teams_PF[idx2].every(x => x.getPlayed() == (Options.getNumbPoule(idx2) - 1)) ? " fade" : "";
             finalGames0[i].childNodes[2].id = Teams_PF[idx1].every(x => x.getPlayed() == (Options.getNumbPoule(idx1) - 1)) ? Teams_PF[idx1][idx3].d_number : undefined;
             finalGames0[i].childNodes[6].id = Teams_PF[idx2].every(x => x.getPlayed() == (Options.getNumbPoule(idx2) - 1)) ? Teams_PF[idx2][idx3 + 1].d_number : undefined;
             finalGames0[i].childNodes[2].innerHTML = Teams_PF[idx1].every(x => x.getPlayed() == (Options.getNumbPoule(idx1) - 1)) ? Teams_PF[idx1][idx3].d_name : idx3 + 1 + 'e ' + tekst1;
@@ -879,41 +960,58 @@ function upSchedule(){
     }
 
     else if (Options.getType() == 'KO'){
-        let KOfinals = document.getElementsByClassName("KOgame");
+
+        let KOfinals = document.getElementsByClassName("KOgame2");
         for (round = 0; round != getBaseLog(2, Options.getNumbEv() ); round++) {
             let roundGames = GamesPerRound(round);
             let roundIndex = 0;
             for (idx = round; idx != 0; idx--)
                 roundIndex += GamesPerRound(idx - 1);
             for (game = 0; game != roundGames; game++) {
-                KOfinals[roundIndex + game].childNodes[0].childNodes[2].id = typeof(Teams_KO[round][2 * game]) != 'undefined' ? Teams_KO[round][2 * game].d_number : "";
-                KOfinals[roundIndex + game].childNodes[1].childNodes[2].id = typeof(Teams_KO[round][2 * game + 1]) != 'undefined' ? Teams_KO[round][2 * game + 1].d_number : "";
-                KOfinals[roundIndex + game].childNodes[0].childNodes[2].innerHTML = typeof(Teams_KO[round][2 * game]) != 'undefined' ? Teams_KO[round][2 * game].d_name : "";
-                KOfinals[roundIndex + game].childNodes[1].childNodes[2].innerHTML = typeof(Teams_KO[round][2 * game + 1]) != 'undefined' ? Teams_KO[round][2 * game + 1].d_name : "";
+                // if (Options.getPlaysKO() == 1) {
+                //     KOfinals[roundIndex + game].childNodes[0].childNodes[2].id = typeof(Teams_KO[round][2 * game]) != 'undefined' ? Teams_KO[round][2 * game].d_number : "";
+                //     KOfinals[roundIndex + game].childNodes[1].childNodes[2].id = typeof(Teams_KO[round][2 * game + 1]) != 'undefined' ? Teams_KO[round][2 * game + 1].d_number : "";
+                //     KOfinals[roundIndex + game].childNodes[0].childNodes[2].innerHTML = typeof(Teams_KO[round][2 * game]) != 'undefined' ? Teams_KO[round][2 * game].d_name : "";
+                //     KOfinals[roundIndex + game].childNodes[1].childNodes[2].innerHTML = typeof(Teams_KO[round][2 * game + 1]) != 'undefined' ? Teams_KO[round][2 * game + 1].d_name : "";
+                // }
+                // else {
+                for (i = 1; i != KOfinals[roundIndex + game].childElementCount; i++){
+                    KOfinals[roundIndex + game].childNodes[i].childNodes[isEven(i) ? 6 : 2].id = typeof(Teams_KO[round][2 * game]) != 'undefined' ? Teams_KO[round][2 * game].d_number : "";
+                    KOfinals[roundIndex + game].childNodes[i].childNodes[isEven(i) ? 2 : 6].id = typeof(Teams_KO[round][2 * game + 1]) != 'undefined' ? Teams_KO[round][2 * game + 1].d_number : "";
+                    KOfinals[roundIndex + game].childNodes[i].childNodes[isEven(i) ? 6 : 2].innerHTML = typeof(Teams_KO[round][2 * game]) != 'undefined' ? Teams_KO[round][2 * game].d_name : "";
+                    KOfinals[roundIndex + game].childNodes[i].childNodes[isEven(i) ? 2 : 6].innerHTML = typeof(Teams_KO[round][2 * game + 1]) != 'undefined' ? Teams_KO[round][2 * game + 1].d_name : ""; 
+                }
+                // }
             } 
-        }       
+        }   
     }
     else if (Options.getType() == 'PK'){
         for (let i = 0, idx = 0, front = 0, back = Teams_KO[0].length - 1; i != Teams_PK.length; i++){
             sort(Teams_PK[i]);
             for (let j = 0; j != Options.getthroughPoule(); j++, idx++){
                 placing = isEven(idx) ? front++ : back--;
-                Teams_KO[0][placing] = Teams_PK[i].every(x => x.getPlayed() == (Options.getNumbPoule(i) - 1)) ? Teams_PK[i][j] : undefined;
+                Teams_KO[0][placing] = Teams_PK[i].every(x => x.getPlayed() == (Options.getPlaysPO() * (Options.getNumbPoule(i) - 1))) ? Teams_PK[i][j] : undefined;
             }
-            //console.log('Teams_KO', Teams_KO);
+      
         }        
 
-        let KOfinals = document.getElementsByClassName("KOgame");
+        let KOfinals = document.getElementsByClassName("KOgame2");
         for (round = 0; round != getBaseLog(2, Options.getKnockouts() ); round++) {
             let roundGames = GamesPerRound(round);
             let roundIndex = 0;
             for (idx = round; idx != 0; idx--)
                 roundIndex += GamesPerRound(idx - 1);
             for (game = 0; game != roundGames; game++) {
-                KOfinals[roundIndex + game].childNodes[0].childNodes[2].id = typeof(Teams_KO[round][2 * game]) != 'undefined' ? Teams_KO[round][2 * game].d_number : "";
-                KOfinals[roundIndex + game].childNodes[1].childNodes[2].id = typeof(Teams_KO[round][2 * game + 1]) != 'undefined' ? Teams_KO[round][2 * game + 1].d_number : "";
-                KOfinals[roundIndex + game].childNodes[0].childNodes[2].innerHTML = typeof(Teams_KO[round][2 * game]) != 'undefined' ? Teams_KO[round][2 * game].d_name : "";
-                KOfinals[roundIndex + game].childNodes[1].childNodes[2].innerHTML = typeof(Teams_KO[round][2 * game + 1]) != 'undefined' ? Teams_KO[round][2 * game + 1].d_name : "";
+                // KOfinals[roundIndex + game].childNodes[0].childNodes[2].id = typeof(Teams_KO[round][2 * game]) != 'undefined' ? Teams_KO[round][2 * game].d_number : "";
+                // KOfinals[roundIndex + game].childNodes[1].childNodes[2].id = typeof(Teams_KO[round][2 * game + 1]) != 'undefined' ? Teams_KO[round][2 * game + 1].d_number : "";
+                // KOfinals[roundIndex + game].childNodes[0].childNodes[2].innerHTML = typeof(Teams_KO[round][2 * game]) != 'undefined' ? Teams_KO[round][2 * game].d_name : "";
+                // KOfinals[roundIndex + game].childNodes[1].childNodes[2].innerHTML = typeof(Teams_KO[round][2 * game + 1]) != 'undefined' ? Teams_KO[round][2 * game + 1].d_name : "";
+                for (i = 1; i != KOfinals[roundIndex + game].childElementCount; i++){
+                        KOfinals[roundIndex + game].childNodes[i].childNodes[isEven(i) ? 6 : 2].id = typeof(Teams_KO[round][2 * game]) != 'undefined' ? Teams_KO[round][2 * game].d_number : "";
+                        KOfinals[roundIndex + game].childNodes[i].childNodes[isEven(i) ? 2 : 6].id = typeof(Teams_KO[round][2 * game + 1]) != 'undefined' ? Teams_KO[round][2 * game + 1].d_number : "";
+                        KOfinals[roundIndex + game].childNodes[i].childNodes[isEven(i) ? 6 : 2].innerHTML = typeof(Teams_KO[round][2 * game]) != 'undefined' ? Teams_KO[round][2 * game].d_name : "";
+                        KOfinals[roundIndex + game].childNodes[i].childNodes[isEven(i) ? 2 : 6].innerHTML = typeof(Teams_KO[round][2 * game + 1]) != 'undefined' ? Teams_KO[round][2 * game + 1].d_name : ""; 
+                    }
             } 
         }       
     }
@@ -982,8 +1080,35 @@ function processScore(a, b, score1, score2){
     Teams[b].d_gd = (Teams[b].d_gf - Teams[b].d_ga);
 }
 
-function newScore(game){    
+function processKOscore1(score1, score2){
+    scoreA = Number(score1);
+    scoreB = Number(score2);
+    if (scoreA > scoreB) 
+        return 1;
+    else if (scoreA < scoreB)
+        return 2;
+    else
+        return 0;
+}
 
+function processKOscore2(score11, score12, score21, score22){
+    score11 = Number(score11);
+    score12 = Number(score12);
+    score21 = Number(score21);
+    score22 = Number(score22);
+    scoreA = score11 + score22;
+    scoreB = score12 + score21;
+    if (scoreA > scoreB) 
+        return 1;
+    else if (scoreA < scoreB)
+        return 2;
+    else if (scoreA == scoreB && score12 != score22) 
+        return score12 < score22 ? 1 : 2; 
+    else
+        return 0;
+}
+
+function newScore(game){    
     Teams.forEach(reset);
     if (Options.getType() == 'PF' || Options.getType() == 'KF' || Options.getType() == 'CP' || Options.getType() == 'PK') {
         let pouleGames = document.querySelectorAll("#pouleGame");
@@ -1002,6 +1127,9 @@ function newScore(game){
     if (Options.getType() == 'KO' || Options.getType() == 'PK'){
         let KOfinals = document.querySelectorAll(".KOgame");
         KOfinals.forEach(processKOGame);
+        let KOfinals2 = document.querySelectorAll(".KOgame2");
+        KOfinals2.forEach(processKOGame2);
+    console.log("teams_KO", Teams_KO);
     }   
 }
 
@@ -1053,6 +1181,53 @@ function processKOGame(game){
     game.childNodes[1].className += bothKnown && scoreKnown && Number(score1) < Number(score2) ? " active" : "";   
     updateTournament();
 }
+
+function processKOGame2(game){
+    for(i = 1; i != game.childElementCount; i++){
+        game.childNodes[i].className = game.childNodes[i].className.replace("active", "");
+        game.childNodes[i].childNodes[2].className = game.childNodes[i].childNodes[2].className.replace("active", "");
+        game.childNodes[i].childNodes[6].className = game.childNodes[i].childNodes[6].className.replace("active", "");
+    }
+
+    let team1 = Teams[game.childNodes[1].childNodes[2].id];
+    let team2 = Teams[game.childNodes[1].childNodes[6].id];
+    let gID = Number(game.id);
+    let teams = [team1, team2];
+    let score11 = game.childNodes[1].childNodes[3].firstChild.value;
+    let score12 = game.childNodes[1].childNodes[5].firstChild.value;
+    let sco1Known = score11.length != 0 && score12.length != 0;
+    
+    let winner, scorKnown, sco2Known;
+    let bothKnown = typeof(team1) != 'undefined' && typeof(team2) != 'undefined';
+    if (game.childElementCount == 3){
+        let score21 = game.childNodes[2].childNodes[3].firstChild.value;
+        let score22 = game.childNodes[2].childNodes[5].firstChild.value;
+        winner = processKOscore2(score11, score12, score21, score22);
+        sco2Known = score21.length != 0 && score22.length != 0; 
+        scorKnown = sco1Known && sco2Known;
+    }
+    else {
+        winner = processKOscore1(score11, score12);
+        scorKnown = score11.length != 0 && score12.length != 0;
+    }
+    let winnKnown = winner != 0;
+
+    game.childNodes[1].className += bothKnown && sco1Known ? " active" : "";
+    game.childNodes[1].childNodes[2].className += bothKnown && scorKnown && winner == 1 ? " active" : "";
+    game.childNodes[1].childNodes[6].className += bothKnown && scorKnown && winner == 2 ? " active" : "";
+   
+    if (game.childElementCount == 3){
+    game.childNodes[2].className += bothKnown && sco2Known ? " active" : "";
+    game.childNodes[2].childNodes[2].className += bothKnown && scorKnown && winner == 2 ? " active" : "";
+    game.childNodes[2].childNodes[6].className += bothKnown && scorKnown && winner == 1 ? " active" : "";
+    }
+    
+    let roundN = findKORound(gID, Options.getKnockouts());
+    let gameN = findKOGame(gID, Options.getKnockouts());
+    Teams_KO[roundN + 1][gameN] = bothKnown && scorKnown && winnKnown ? teams[winner - 1] : undefined;
+    updateTournament();
+}
+
 
 function processFinalGame(game){
     game.className = game.className.replace("active", "");
@@ -1107,13 +1282,11 @@ function processPouleGame(game){
 }
 
 function fillTeams() {
-    for (let i = 0; i != Options.getNumb(); i++) {
+    for (let i = 0; i != Options.getNumb(); i++) 
         Teams[i] = new Team(i, Options.getName(i));
-    }
-
-    for (let i = 0; i != Options.getNumb(); i++) {
+    
+    for (let i = 0; i != Options.getNumb(); i++) 
         Teams_CP[i] = Teams[i];
-    }
 
     for (let i = 0; i != 2; i++)
         Teams_PF[i] = Teams.slice((Options.getNumbEv() / 2) * i, (Options.getNumbEv() / 2) * (i + 1));  

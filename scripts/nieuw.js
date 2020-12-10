@@ -155,14 +155,11 @@ function addTeamFields(){
         let ntpp = Math.ceil(tobeplaced/tobefilled);
         let stop = Math.min(ntpp, tobeplaced);
         for(let j=0;j!=stop;j++){
-            //let newDiv = document.createElement("div");
-            //newDiv.setAttribute("class", "labelInputContainer1");
             let newInput = document.createElement("input");
             newInput.type = "text";
             newInput.setAttribute("class", "teamInput");
             newInput.setAttribute("required", "true");
             newInput.setAttribute("placeholder", "Team " + teamindex++);
-            //newDiv.appendChild(newInput);
             containers[i].appendChild(newInput);
             tobeplaced--;
         }
@@ -176,6 +173,10 @@ function saveVariables(){
     let nTeams = Number(document.getElementById("nTeams").value);
     let nPoules= Number(document.getElementById("nPoules").value);
     let nThroughPoule = Number(document.getElementById("nThroughPoule").value);
+    let nPlaysCP = Number(document.getElementById("nPlaysCP").value);
+    let nPlaysPO = Number(document.getElementById("nPlaysPO").value);
+    let nPlaysKO = Number(document.getElementById("nPlaysKO").value);
+    let nPlaysFI = Number(document.getElementById("nPlaysFI").value);
     //let begintijd = document.getElementById("begintijd").value;
     //let speelduur = document.getElementById("speelduur").value;
     //let pauze = document.getElementById("pauze").value;
@@ -187,6 +188,10 @@ function saveVariables(){
     sessionStorage.setItem('nTeams', nTeams);  
     sessionStorage.setItem('nPoules', nPoules);
     sessionStorage.setItem('nThroughPoule', nThroughPoule);
+    sessionStorage.setItem('nPlaysCP', nPlaysCP);
+    sessionStorage.setItem('nPlaysPO', nPlaysPO);
+    sessionStorage.setItem('nPlaysKO', nPlaysKO);
+    sessionStorage.setItem('nPlaysFI', nPlaysFI);
     //sessionStorage.setItem('begintijd', begintijd);
     //sessionStorage.setItem('speelduur', speelduur);
     //sessionStorage.setItem('pauze', pauze);

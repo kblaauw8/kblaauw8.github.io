@@ -22,14 +22,9 @@
 
     <!-- Navigation Bar -->
     <div class="navbar">
-        <a href="index.html">Home</a>
-        <a href="nieuw.html">Nieuw Toernooi</a>
-        <a href="tournament.html" onclick="setType('PF')">Poule and Finals</a>
-        <a href="tournament.html" onclick="setType('KF')">Poule and CrossFinals</a>
-        <a href="tournament.html" onclick="setType('PK')">Poule and Knockout</a>
-        <a href="tournament.html" onclick="setType('CP')">Competition</a>
-        <a href="tournament.html" onclick="setType('KO')">Knockout</a>
-        <a href="tournament.html">Huidig Toernooi</a>
+        <a class="navBut" href="index.html">Home</a>
+        <a class="navBut" href="nieuw.html">Nieuw Toernooi</a>
+        <a class="navBut" href="tournament.html">Huidig Toernooi</a>
     </div>
 
     <!-- The flexible grid (content) -->
@@ -77,49 +72,33 @@
                 </div>
                 <div class="labelInputContainer CP">
                     <label for="leaguePlays">Opzet Competitie</label>
-                    <select class="ui" id="opzet_poule">
+                    <select class="ui" id="nPlaysCP">
                         <option selected="selected" value="1">Halve competitie</option>
-                        <option value="1">Hele competitie</option>
+                        <option value="2">Hele competitie</option>
                     </select>
                 </div>
                 <div class="labelInputContainer PO">
                     <label for="leaguePlays">Opzet Poulefase</label>
-                    <select class="ui" id="opzet_poule">
+                    <select class="ui" id="nPlaysPO">
                         <option selected="selected" value="1">Halve competitie</option>
-                        <option value="1">Hele competitie</option>
+                        <option value="2">Hele competitie</option>
                     </select>
                 </div>
                 <div class="labelInputContainer KO">
                     <label for="leaguePlays">Opzet Knockoutfase</label>
-                    <select class="ui" id="leaguePlays">
+                    <select class="ui" id="nPlaysKO">
                         <option selected="selected" value="1">1 wedstrijd per confrontatie</option>
                         <option value="2">2 wedstrijden per confrontatie</option>
                     </select>
                 </div>
                 <div class="labelInputContainer KO">
                     <label for="leaguePlays">Opzet Finale</label>
-                    <select class="ui" id="leaguePlays">
-                        <option selected="selected" value="8">1 wedstrijd</option>
-                        <option value="16">2 wedstrijden</option>
+                    <select class="ui" id="nPlaysFI">
+                        <option selected="selected" value="1">1 wedstrijd</option>
+                        <option value="2">2 wedstrijden</option>
                     </select>
                 </div>
                 
-                
-               <!--  <div class="labelInputContainer">
-                    <label for="begintijd">Aanvangstijd</label>
-                    <input class="ui" type="time" id="begintijd" name="appt"
-                    min="00:00" max="24:00" value="19:00" required>
-                </div>
-                <div class="labelInputContainer">
-                    <label for="speelduur">Speelduur</label>
-                    <input class="ui" type="time" id="speelduur" name="appt"
-                    min="00:00" max="24:00" value="00:15" required>
-                </div>
-                <div class="labelInputContainer">
-                    <label for="pauze">Tijd tussen wedstrijden</label>
-                    <input class="ui" type="time" id="pauze" name="appt"
-                    min="00:00" max="24:00" value="00:05" required>
-                </div> -->
                 
             </div>
             <div class="box2" id="pouleFieldContainer">

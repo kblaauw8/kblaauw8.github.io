@@ -89,11 +89,15 @@ tr:nth-child(odd) td {
 }
 
 tr:nth-child(even).active td {
-  background-color: #DEDEDE;
+  background-color: #b3b3b3;
 }
 
 tr:nth-child(odd).active td {
-  background-color: #d4d4d4;
+  background-color: #a6a6a6;
+}
+
+tr.lastRow td {
+  border-bottom: 1px solid white;
 }
 
 caption {
@@ -161,6 +165,41 @@ table.KOgame.active input[type=number]{
   color: black;
   text-align: center;
   font-size: 1.2rem;
+}
+
+table.KOgame2 {
+  width: 380px;
+}
+
+table.KOgame2 tr:nth-child(2) td:nth-child(3).active {
+  background-color: #3a7d37;
+}
+table.KOgame2 tr:nth-child(2) td:nth-child(7).active {
+  background-color: #3a7d37;
+}
+table.KOgame2 tr:nth-child(3) td:nth-child(3).active {
+  background-color: #3a7d37;
+}
+table.KOgame2 tr:nth-child(3) td:nth-child(7).active {
+  background-color: #3a7d37;
+}
+
+/* Fading animation */
+.fade {
+  -webkit-animation-name: fade;
+  -webkit-animation-duration: 1.5s;
+  animation-name: fade;
+  animation-duration: 1.5s;
+}
+
+@-webkit-keyframes fade {
+  from {opacity: 0}
+  to {opacity: 1}
+}
+
+@keyframes fade {
+  from {opacity: 0}
+  to {opacity: 1}
 }
 
 
