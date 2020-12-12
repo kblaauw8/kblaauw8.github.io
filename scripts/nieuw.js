@@ -56,8 +56,7 @@ function down1(step, min, id) {
 }
 function down2(step, id) {
     let type = document.getElementById('type').value;
-    let min = type == 'PK' ? Math.max(document.getElementById('nPoules').value, 2) : 2;
-    console.log('min: ', min);
+    let min = type == 'PK' ? Math.max(2 * parseInt(document.getElementById('nPoules').value), 2) : 2;
     document.getElementById(id).value = parseInt(document.getElementById(id).value) - parseInt(step);
     if (document.getElementById(id).value <= parseInt(min)) {
         document.getElementById(id).value = min;
@@ -192,9 +191,6 @@ function saveVariables(){
     sessionStorage.setItem('nPlaysPO', nPlaysPO);
     sessionStorage.setItem('nPlaysKO', nPlaysKO);
     sessionStorage.setItem('nPlaysFI', nPlaysFI);
-    //sessionStorage.setItem('begintijd', begintijd);
-    //sessionStorage.setItem('speelduur', speelduur);
-    //sessionStorage.setItem('pauze', pauze);
 }
 
 // There are many ways to pick a DOM node; here we get the form itself and the naam
@@ -202,11 +198,17 @@ function saveVariables(){
 const form  = document.getElementsByTagName('form')[0];
 
 form.addEventListener('submit', function (event) {
-  // if the naam field is valid, we let the form submit
-    saveVariables();
-    window.location.assign("tournament.html");
     event.preventDefault();
+    if (inputControl()){
+        saveVariables();
+        window.location.assign("tournament.html");
+    }
 })
+
+function inputControl(){
+    // Todo
+    return true;
+}
 
 function setOptions(){
     switch(document.getElementById('type').value){
@@ -234,8 +236,10 @@ function setOptions(){
 }
 
 function matchOptions(){
-    if (parseInt(document.getElementById("nTeams").value) < parseInt(document.getElementById("nPoules").value))
-        document.getElementById("nTeams").value = parseInt(document.getElementById("nPoules").value);
+    if (parseInt(document.getElementById("nTeams").value) < 2 * parseInt(document.getElementById("nPoules").value)){
+        document.getElementById("nTeams").value = 2 * parseInt(document.getElementById("nPoules").value);
+        //document.getElementById("nTeams")
+    }
     addTeamFields();
 }
 

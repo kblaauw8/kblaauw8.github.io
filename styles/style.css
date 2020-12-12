@@ -59,10 +59,11 @@ h2.custom1{
 .row {  
   display: flex;
   flex-wrap: wrap;
+  background-color: white;
 }
 
 .left {
-    flex: 28%;
+    flex: 29%;
     background-color: white;;
     padding: 4px;
     
@@ -71,7 +72,7 @@ h2.custom1{
 }
 
 .right {
-  flex: 72%;
+  flex: 71%;
   background-color: white;
   padding: 4px;
   
@@ -122,36 +123,6 @@ h2.custom1{
   }
 }
 
-.labelInputContainer {
-  flex: 1;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  line-height: 26px;
-  margin-bottom: 0px;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  background-color: inherit;
-  font-size: 130%;
-}
-
-.labelInputContainer1 {
-  flex: 1;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  line-height: 26px;
-  margin-bottom: 0px;
-  padding-top: 4px;
-  padding-bottom: 4px;
-  padding-right: 10px;
-  padding-left: 0px;
-  background-color: inherit;
-  font-size: 130%;
-}
-
 .outLineLeft {
   flex: 1;
   background-color: white;
@@ -192,8 +163,7 @@ h2.custom1{
 
 .box1{
   flex: 0 0 100px;
-  background-color: white;
-  padding: 0px;
+  background-color: inherit;
   position: relative;
 }
 
@@ -280,7 +250,7 @@ h2.custom1{
   display: flex;
   flex-direction: row;
   border-radius: 4px;
-  margin: 15px;
+  margin: 10px;
   border-width: 0px;
   padding: 20px;
 }
@@ -292,6 +262,16 @@ h2.custom1{
   border-width: 0px;
   padding: 20px;
   padding-right: 60%;
+}
+
+#left3{
+  background-color: #f2f2f2;
+  display: flex;
+  flex-direction: column;
+  border-radius: 4px;
+  margin: 10px;
+  border-width: 0px;
+  padding: 20px;
 }
 
 

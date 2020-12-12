@@ -233,6 +233,7 @@ function makeLeft(){
     box.appendChild(outLineLeftBox);
 
     let standBox = document.getElementById("standSpace");
+    let resultBox = document.getElementById("resultSpace");
     if (Options.getType()== 'PF' || Options.getType()== 'KF'){
         let header1 = makeHeader('h1', "Poule A");
         let header2 = makeHeader('h1', "Poule B");
@@ -240,14 +241,15 @@ function makeLeft(){
         standBox.appendChild(make("div", "box3", "pouleStand"));
         standBox.appendChild(header2);
         standBox.appendChild(make("div", "box3", "pouleStand"));
+        let header3 = makeHeader('h1', "Uitslag");
+        resultBox.appendChild(header3);
+        resultBox.appendChild(make("div", "box3", "finalResultBox")); 
     }
     else if (Options.getType()== 'CP'){
         standBox.appendChild(make("div", "box3", "cpStandBox"));
+        resultBox.appendChild(make("div", "box3", "finalResultBox")); 
     }
 
-    let resultBox = document.getElementById("resultSpace");
-    resultBox.appendChild(makeHeader('h1', "Uitslag"));
-    resultBox.appendChild(make("div", "box3", "finalResult")); 
 }
 
 function makeRight(){
@@ -524,7 +526,7 @@ function makeStandings()
 function makeResults()
 {
     if (Options.getType() == 'PF' || Options.getType() == 'KF' || Options.getType() == 'CP'){
-        let standingSpaces = document.querySelectorAll("#finalResult");
+        let standingSpaces = document.querySelectorAll("#finalResultBox");
         for (let i = 0; i != standingSpaces.length; i++)
             standingSpaces[i].appendChild(newResultTable(Options.getNumb()));
     } 

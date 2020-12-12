@@ -16,7 +16,7 @@
 <body>
     <!-- Header -->
     <div class="header">
-        <h1 id="displayName">Jonne Hindriks Jeugdtoernooi</h1>
+        <h1 id="displayName">Jonne Hindriks Tournament Maker</h1>
         <h3>2020 - 2021</h3>
     </div>
 
@@ -24,17 +24,16 @@
     <div class="navbar">
         <a class="navBut" href="index.html">Home</a>
         <a class="navBut" href="nieuw.html">Nieuw Toernooi</a>
-        <a class="navBut" href="tournament.html">Huidig Toernooi</a>
     </div>
 
     <!-- The flexible grid (content) -->
     <div class="row">  
-        <form>
+        <form id="left3">
             <div class="box1">
                 <h1>Nieuw toernooi</h1>
                 <div class="labelInputContainer">
                     <label for="naam">Naam</label>
-                    <input class="ui" id="naam" type="text" value="Jonne Hindriks Jeugdtoernooi" required>
+                    <input class="ui" id="naam" type="text" placeholder="Jonne Hindriks Jeugdtoernooi" required>
                 </div>
                 <div class="labelInputContainer">
                     <label for="type">Type</label>
@@ -47,7 +46,7 @@
                     </select>
                 </div>
                 <div class="labelInputContainer">
-                    <label for="aantal">#Teams</label>
+                    <label for="aantal">Teams</label>
                     <div class="input-group">
                         <button type="button" id="down" class="btn" onclick="down2('1', 'nTeams'); addTeamFields()">-</button>
                         <input type="text" id="nTeams" class="form-control input-number" value="4" required>
@@ -55,7 +54,7 @@
                     </div>
                 </div>
                 <div class="labelInputContainer PO">
-                    <label for="leaguePlays">#Poules</label>
+                    <label for="leaguePlays">Poules</label>
                     <div class="input-group">
                         <button type="button" id="down" class="btn" onclick="down1('1', '1', 'nPoules'); addPouleFields(); matchOptions()">-</button>
                         <input type="text" id="nPoules" class="form-control input-number" value="1" required>
@@ -63,7 +62,7 @@
                     </div>
                 </div>
                 <div class="labelInputContainer PO">
-                    <label for="knockoutOpzet">#Door per poule</label>
+                    <label for="knockoutOpzet">Door per poule</label>
                     <div class="input-group">
                         <button type="button" id="down" class="btn" onclick="down1('1', '1', 'nThroughPoule')">-</button>
                         <input type="text" id="nThroughPoule" class="form-control input-number" value="1" required>
@@ -98,24 +97,11 @@
                         <option value="2">2 wedstrijden</option>
                     </select>
                 </div>
-                
-                
             </div>
+            
             <div class="box2" id="pouleFieldContainer">
-                <div class="poulebox">
-                    <div class="subheader">
-                        <h2>Poule A</h2>
-                    </div>
-                    <div id="teamFieldContainer">
-                    </div>
-                </div>
-                <div class="poulebox">
-                    <div class="subheader">
-                    <h2>Poule B</h2>
-                    </div>
-                    dag hoor
-                </div>
             </div> 
+
             <div class="box2">
                 <button class="knopje_nieuw" type="submit"><h2>Maak Toernooi</h2></button> 
             </div>      
