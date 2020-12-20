@@ -271,7 +271,7 @@ function makeRight(){
     but1.onclick = function() {openTab(event, 'Group')};
     
     let but2 = document.createElement("button");
-    but2.innerHTML = "Kockout-fase";
+    but2.innerHTML = "Knockout-fase";
     but2.setAttribute("class", "tablinks");
     but2.setAttribute("id", "");
     but2.onclick = function() {openTab(event, 'Knockout')};
